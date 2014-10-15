@@ -38,3 +38,8 @@
   (dotimes [x 10]
     (go
       (time (build-car x)))))
+
+(defn start-three []
+  (dotimes [x 3]
+    (go
+      (time (println (take-part))))))
