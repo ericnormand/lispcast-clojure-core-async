@@ -34,3 +34,7 @@
     (put-in-truck box)
     (println n "Done!!")))
 
+(defn start-ten []
+  (dotimes [x 10]
+    (go
+      (time (build-car x)))))
