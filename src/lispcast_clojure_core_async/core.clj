@@ -44,52 +44,50 @@
     (go
       (time (println (take-part))))))
 
-(defn assembly-line []
-  (let [body-chan (chan)
-        wheel1-chan (chan)
-        wheel2-chan (chan)
-        body+wheel-chan (chan)
-        body+2-wheels-chan (chan)
-        box-chan (chan)]
-    (go
-      (while true
-        (let [body (loop []
+(defn go-body [body-chan]
+  (go
+    (while true
+      (let [body (loop []
+                   (let [part (take-part)]
+                     (if (body? part)
+                       part
+                       (recur))))]
+        (println "Got body")
+        (>! body-chan body)))))
+
+(defn go-wheel1 [wheel1-chan]
+  (go
+    (while true
+      (let [wheel1 (loop []
                      (let [part (take-part)]
-                       (if (body? part)
+                       (if (wheel? part)
                          part
                          (recur))))]
-          (println "Got body")
-          (>! body-chan body))))
-    (go
-      (while true
-        (let [wheel1 (loop []
-                       (let [part (take-part)]
-                         (if (wheel? part)
-                           part
-                           (recur))))]
-          (println "Got first wheel")
-          (>! wheel1-chan wheel1))))
-    (go
-      (while true
-        (let [wheel2 (loop []
-                       (let [part (take-part)]
-                         (if (wheel? part)
-                           part
-                           (recur))))]
-          (println "Got second wheel")
-          (>! wheel2-chan wheel2))))
+        (println "Got first wheel")
+        (>! wheel1-chan wheel1)))))
 
-    (dotimes [x 2]
-      (go
-        (while true
-          (let [body (<! body-chan)
-                wheel1 (<! wheel1-chan)
-                bw (attach-wheel body wheel1)]
-            (println "Attached first wheel")
-            (>! body+wheel-chan bw)))))
+(defn go-wheel2 [wheel2-chan]
+  (go
+    (while true
+      (let [wheel2 (loop []
+                     (let [part (take-part)]
+                       (if (wheel? part)
+                         part
+                         (recur))))]
+        (println "Got second wheel")
+        (>! wheel2-chan wheel2)))))
 
-    (dotimes [x 2]
-      (go
+(defn go-attach-wheel1 [body-chan wheel1-chan body+wheel-chan]
+  (go
+    (while true
+      (let [body (<! body-chan)
+            wheel1 (<! wheel1-chan)
+            bw (attach-wheel body wheel1)]
+        (println "Attached first wheel")
+        (>! body+wheel-chan bw)))))
+
+(defn go-attach-wheel2 [body+wheel-chan wheel2-chan body+2-wheels-chan]
+  (go
         (while true
           (let [bw (<! body+wheel-chan)
                 wheel2 (<! wheel2-chan)
@@ -97,16 +95,39 @@
             (println "Attached second wheel")
             (>! body+2-wheels-chan bww)))))
 
-    (dotimes [x 2]
-      (go
-        (while true
-          (let [box (box-up (<! body+2-wheels-chan))]
-            (println "Boxed up car")
-            (>! box-chan box)))))
+(defn go-box-up [body+2-wheels-chan box-chan]
+  (go
+    (while true
+      (let [box (box-up (<! body+2-wheels-chan))]
+        (println "Boxed up car")
+        (>! box-chan box)))))
 
-    (go
-      (time
-       (dotimes [x 10]
-         (time
-          (put-in-truck (<! box-chan)))
-         (println "Done!!"))))))
+(defn go-put-in-truck [box-chan]
+  (go
+    (time
+     (dotimes [x 10]
+       (time
+        (put-in-truck (<! box-chan)))
+       (println "Done!!")))))
+
+(defn assembly-line []
+  (let [body-chan (chan)
+        wheel1-chan (chan)
+        wheel2-chan (chan)
+        body+wheel-chan (chan)
+        body+2-wheels-chan (chan)
+        box-chan (chan)]
+    (go-body body-chan)
+    (go-wheel1 wheel1-chan)
+    (go-wheel2 wheel2-chan)
+
+    (dotimes [x 2]
+      (go-attach-wheel1 body-chan wheel1-chan body+wheel-chan))
+
+    (dotimes [x 2]
+      (go-attach-wheel2 body+wheel-chan wheel2-chan body+2-wheels-chan))
+
+    (dotimes [x 2]
+      (go-box-up body+2-wheels-chan box-chan))
+
+    (go-put-in-truck box-chan)))
