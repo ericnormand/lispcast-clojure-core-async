@@ -108,7 +108,8 @@
      (dotimes [x 10]
        (time
         (put-in-truck (<! box-chan)))
-       (println "Done!!")))))
+       (println "Done!!")))
+    (async/close! box-chan)))
 
 (defn assembly-line []
   (let [body-chan (chan 10)
