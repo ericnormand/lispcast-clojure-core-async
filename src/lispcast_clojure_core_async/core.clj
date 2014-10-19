@@ -111,12 +111,12 @@
        (println "Done!!")))))
 
 (defn assembly-line []
-  (let [body-chan (chan)
-        wheel1-chan (chan)
-        wheel2-chan (chan)
-        body+wheel-chan (chan)
-        body+2-wheels-chan (chan)
-        box-chan (chan)]
+  (let [body-chan (chan 10)
+        wheel1-chan (chan 10)
+        wheel2-chan (chan 10)
+        body+wheel-chan (chan 10)
+        body+2-wheels-chan (chan 10)
+        box-chan (chan 10)]
     (go-body body-chan)
     (go-wheel1 wheel1-chan)
     (go-wheel2 wheel2-chan)
