@@ -79,27 +79,30 @@
           (println "Got second wheel")
           (>! wheel2-chan wheel2))))
 
-    (go
-      (while true
-        (let [body (<! body-chan)
-              wheel1 (<! wheel1-chan)
-              bw (attach-wheel body wheel1)]
-          (println "Attached first wheel")
-          (>! body+wheel-chan bw))))
+    (dotimes [x 2]
+      (go
+        (while true
+          (let [body (<! body-chan)
+                wheel1 (<! wheel1-chan)
+                bw (attach-wheel body wheel1)]
+            (println "Attached first wheel")
+            (>! body+wheel-chan bw)))))
 
-    (go
-      (while true
-        (let [bw (<! body+wheel-chan)
-              wheel2 (<! wheel2-chan)
-              bww (attach-wheel bw wheel2)]
-          (println "Attached second wheel")
-          (>! body+2-wheels-chan bww))))
+    (dotimes [x 2]
+      (go
+        (while true
+          (let [bw (<! body+wheel-chan)
+                wheel2 (<! wheel2-chan)
+                bww (attach-wheel bw wheel2)]
+            (println "Attached second wheel")
+            (>! body+2-wheels-chan bww)))))
 
-    (go
-      (while true
-        (let [box (box-up (<! body+2-wheels-chan))]
-          (println "Boxed up car")
-          (>! box-chan box))))
+    (dotimes [x 2]
+      (go
+        (while true
+          (let [box (box-up (<! body+2-wheels-chan))]
+            (println "Boxed up car")
+            (>! box-chan box)))))
 
     (go
       (time
