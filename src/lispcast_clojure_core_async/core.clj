@@ -124,20 +124,19 @@
 
 (defn assembly-line []
   (let [body-chan (chan 10)
-        wheel1-chan (chan 10)
-        wheel2-chan (chan 10)
+        wheel-chan (chan 20)
         body+wheel-chan (chan 10)
         body+2-wheels-chan (chan 10)
         box-chan (chan 10)]
     (go-body body-chan)
-    (go-wheel1 wheel1-chan)
-    (go-wheel2 wheel2-chan)
+    (go-wheel1 wheel-chan)
+    (go-wheel2 wheel-chan)
 
     (dotimes [x 2]
-      (go-attach-wheel1 body-chan wheel1-chan body+wheel-chan))
+      (go-attach-wheel1 body-chan wheel-chan body+wheel-chan))
 
     (dotimes [x 2]
-      (go-attach-wheel2 body+wheel-chan wheel2-chan body+2-wheels-chan))
+      (go-attach-wheel2 body+wheel-chan wheel-chan body+2-wheels-chan))
 
     (dotimes [x 2]
       (go-box-up body+2-wheels-chan box-chan))
