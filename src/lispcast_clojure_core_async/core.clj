@@ -56,28 +56,16 @@
         (when (>! body-chan body)
           (recur))))))
 
-(defn go-wheel1 [wheel1-chan]
+(defn go-wheel [wheel-chan]
   (go
     (loop []
-      (let [wheel1 (loop []
+      (let [wheel (loop []
                      (let [part (take-part)]
                        (if (wheel? part)
                          part
                          (recur))))]
         (println "Got first wheel")
-        (when (>! wheel1-chan wheel1)
-          (recur))))))
-
-(defn go-wheel2 [wheel2-chan]
-  (go
-    (loop []
-      (let [wheel2 (loop []
-                     (let [part (take-part)]
-                       (if (wheel? part)
-                         part
-                         (recur))))]
-        (println "Got second wheel")
-        (when (>! wheel2-chan wheel2)
+        (when (>! wheel-chan wheel)
           (recur))))))
 
 (defn go-attach-wheel1 [body-chan wheel1-chan body+wheel-chan]
@@ -129,8 +117,7 @@
         body+2-wheels-chan (chan 10)
         box-chan (chan 10)]
     (go-body body-chan)
-    (go-wheel1 wheel-chan)
-    (go-wheel2 wheel-chan)
+    (go-wheel wheel-chan)
 
     (dotimes [x 2]
       (go-attach-wheel1 body-chan wheel-chan body+wheel-chan))
