@@ -105,10 +105,10 @@
         box-chan (chan 10)]
     (go-parts body-chan wheel-chan)
 
-    (dotimes [x 2]
+    (dotimes [x 3]
       (go-attach-wheel1 body-chan wheel-chan body+wheel-chan))
 
-    (dotimes [x 2]
+    (dotimes [x 3]
       (go-attach-wheel2 body+wheel-chan wheel-chan body+2-wheels-chan))
 
     (dotimes [x 2]
