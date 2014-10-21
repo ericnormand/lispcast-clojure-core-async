@@ -46,54 +46,63 @@
 
 (defn go-body [body-chan]
   (go
-    (while true
+    (loop []
       (let [body (loop []
                    (let [part (take-part)]
                      (if (body? part)
                        part
                        (recur))))]
         (println "Got body")
-        (>! body-chan body)))))
+        (when (>! body-chan body)
+          (recur))))))
 
 (defn go-wheel1 [wheel1-chan]
   (go
-    (while true
+    (loop []
       (let [wheel1 (loop []
                      (let [part (take-part)]
                        (if (wheel? part)
                          part
                          (recur))))]
         (println "Got first wheel")
-        (>! wheel1-chan wheel1)))))
+        (when (>! wheel1-chan wheel1)
+          (recur))))))
 
 (defn go-wheel2 [wheel2-chan]
   (go
-    (while true
+    (loop []
       (let [wheel2 (loop []
                      (let [part (take-part)]
                        (if (wheel? part)
                          part
                          (recur))))]
         (println "Got second wheel")
-        (>! wheel2-chan wheel2)))))
+        (when (>! wheel2-chan wheel2)
+          (recur))))))
 
 (defn go-attach-wheel1 [body-chan wheel1-chan body+wheel-chan]
   (go
-    (while true
+    (loop []
       (let [body (<! body-chan)
             wheel1 (<! wheel1-chan)
             bw (attach-wheel body wheel1)]
         (println "Attached first wheel")
-        (>! body+wheel-chan bw)))))
+        (when (>! body+wheel-chan bw)
+          (recur))))
+    (async/close! body-chan)
+    (async/close! wheel1-chan)))
 
 (defn go-attach-wheel2 [body+wheel-chan wheel2-chan body+2-wheels-chan]
   (go
-        (while true
-          (let [bw (<! body+wheel-chan)
-                wheel2 (<! wheel2-chan)
-                bww (attach-wheel bw wheel2)]
-            (println "Attached second wheel")
-            (>! body+2-wheels-chan bww)))))
+    (loop []
+      (let [bw (<! body+wheel-chan)
+            wheel2 (<! wheel2-chan)
+            bww (attach-wheel bw wheel2)]
+        (println "Attached second wheel")
+        (when (>! body+2-wheels-chan bww)
+          (recur))))
+    (async/close! body+wheel-chan)
+    (async/close! wheel2-chan)))
 
 (defn go-box-up [body+2-wheels-chan box-chan]
   (go
