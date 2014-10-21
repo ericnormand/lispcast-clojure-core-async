@@ -97,10 +97,12 @@
 
 (defn go-box-up [body+2-wheels-chan box-chan]
   (go
-    (while true
+    (loop []
       (let [box (box-up (<! body+2-wheels-chan))]
         (println "Boxed up car")
-        (>! box-chan box)))))
+        (when (>! box-chan box)
+          (recur))))
+    (async/close! body+2-wheels-chan)))
 
 (defn go-put-in-truck [box-chan]
   (go
