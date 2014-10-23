@@ -143,6 +143,14 @@
             (println "Break time!")
             (do
               (do-task val ch)
+              (recur))))))
+    (let [t (async/timeout 5000)]
+      (loop []
+        (let [[v c] (alts! [t reps-chan])]
+          (if (= c t)
+            (println "Work time!")
+            (do
+              (println "Pushup!")
               (recur))))))))
 
 (defn work []
