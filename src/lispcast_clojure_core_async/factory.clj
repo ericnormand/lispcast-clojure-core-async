@@ -104,6 +104,7 @@
 (defonce todo-chan (chan))
 
 (defonce __3 (go (while true
+                   (<! (async/timeout 1000))
                    (>! todo-chan :todo))))
 
 (defonce reps-chan (chan))
