@@ -122,6 +122,15 @@
     (go-put-in-truck box-chan)))
 
 
+(defn do-task [v ch]
+  (cond
+   (= ch telephone-chan)
+   (println "Ring-ring!")
+   (= ch email-chan)
+   (println "You've got mail!")
+   (= ch todo-chan)
+   (println "Work work work!")))
+
 (defn pomodoro []
   (go
     (let [t (async/timeout 10000)]
@@ -133,13 +142,7 @@
           (if (= ch t)
             (println "Break time!")
             (do
-              (cond
-               (= ch telephone-chan)
-               (println "Ring-ring!")
-               (= ch email-chan)
-               (println "You've got mail!")
-               (= ch todo-chan)
-               (println "Work work work!"))
+              (do-task val ch)
               (recur))))))))
 
 (defn work []
