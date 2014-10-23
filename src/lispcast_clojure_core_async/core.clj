@@ -171,7 +171,21 @@
             (println "Work time!")
             (do
               (println "Jump!")
-              (recur))))))))
+              (recur))))))
+
+    (let [t (async/timeout 10000)]
+      (loop []
+        (let [[val ch] (alts! [t
+                               telephone-chan
+                               email-chan
+                               todo-chan])]
+          (if (= ch t)
+            (println "Break time!")
+            (do
+              (do-task val ch)
+              (recur))))))
+    (<! (async/timeout 10000))
+    (println "Work is done!")))
 
 (defn work []
   (go
