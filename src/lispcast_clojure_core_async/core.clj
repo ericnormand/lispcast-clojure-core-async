@@ -97,6 +97,19 @@
        (println "Done!!")))
     (async/close! box-chan)))
 
+(defn go-car [body-chan wheel-chan box-chan]
+  (go
+    (loop []
+      (let [body (<! body-chan)
+            wheel1 (<! wheel-chan)
+            bw (attach-wheel body wheel1)
+            wheel2 (<! wheel-chan)bww (attach-wheel bw wheel2)box (box-up bww)]
+        (println "Finished car")
+        (when (>! box-chan box)
+          (recur))))
+    (async/close! body-chan)
+    (async/close! wheel-chan)))
+
 (defn assembly-line []
   (let [body-chan (chan (async/dropping-buffer 10))
         wheel-chan (chan (async/dropping-buffer 20))
