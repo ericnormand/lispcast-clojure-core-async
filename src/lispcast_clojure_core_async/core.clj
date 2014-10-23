@@ -137,3 +137,13 @@
     (<! (async/timeout 5000))
 
     (println "Finished!")))
+
+(defn work []
+  (go
+    (let [[val ch] (alts! [telephone-chan
+                           email-chan])]
+      (cond
+       (= ch telephone-chan)
+       (println "Ring-ring!")
+       (= ch email-chan)
+       (println "You've got mail!")))))
