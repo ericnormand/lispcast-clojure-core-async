@@ -78,3 +78,13 @@
 
 (defn wheel? [part]
   (= :wheel part))
+
+
+(defn do-work []
+  (println "Working...")
+  (Thread/sleep 500)
+  (println "Working...")
+  (Thread/sleep 5200)
+  (println "Still working...")
+  (Thread/sleep 500)
+  (println "Done working."))
