@@ -131,7 +131,7 @@
    (= ch todo-chan)
    (println "Work work work!")))
 
-(defn pomodoro []
+(defn work-session []
   (go
     (let [t (async/timeout 10000)]
       (loop []
@@ -143,7 +143,11 @@
             (println "Break time!")
             (do
               (do-task val ch)
-              (recur))))))
+              (recur))))))))
+
+(defn pomodoro []
+  (go
+    (work-session)
     (let [t (async/timeout 5000)]
       (loop []
         (let [[v c] (alts! [t reps-chan] :priority true)]
@@ -153,17 +157,7 @@
               (println "Pushup!")
               (recur))))))
 
-    (let [t (async/timeout 10000)]
-      (loop []
-        (let [[val ch] (alts! [t
-                               telephone-chan
-                               email-chan
-                               todo-chan] :priority true)]
-          (if (= ch t)
-            (println "Break time!")
-            (do
-              (do-task val ch)
-              (recur))))))
+    (work-session)
     (let [t (async/timeout 5000)]
       (loop []
         (let [[v c] (alts! [t reps-chan] :priority true)]
@@ -173,17 +167,7 @@
               (println "Jump!")
               (recur))))))
 
-    (let [t (async/timeout 10000)]
-      (loop []
-        (let [[val ch] (alts! [t
-                               telephone-chan
-                               email-chan
-                               todo-chan] :priority true)]
-          (if (= ch t)
-            (println "Break time!")
-            (do
-              (do-task val ch)
-              (recur))))))
+    (work-session)
     (<! (async/timeout 10000))
     (println "Work is done!")))
 
