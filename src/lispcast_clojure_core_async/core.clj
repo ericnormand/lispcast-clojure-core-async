@@ -146,14 +146,15 @@
               (recur))))))))
 
 (defn break-session [do-exercise]
-  (let [t (async/timeout 5000)]
-    (loop []
-      (let [[v c] (alts! [t reps-chan] :priority true)]
-        (if (= c t)
-          (println "Work time!")
-          (do
-            (do-exercise)
-            (recur)))))))
+  (go
+    (let [t (async/timeout 5000)]
+      (loop []
+        (let [[v c] (alts! [t reps-chan] :priority true)]
+          (if (= c t)
+            (println "Work time!")
+            (do
+              (do-exercise)
+              (recur))))))))
 
 (defn pomodoro []
   (go
