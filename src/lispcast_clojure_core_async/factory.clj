@@ -88,3 +88,20 @@
   (println "Still working...")
   (Thread/sleep 500)
   (println "Done working."))
+
+(defonce telephone-chan (chan))
+
+(defonce __1 (go (while true
+                   (<! (async/timeout 3000))
+                   (>! telephone-chan :ring))))
+
+(defonce email-chan (chan))
+
+(defonce __2 (go (while true
+                   (<! (async/timeout 1000))
+                   (>! email-chan :email))))
+
+(defonce todo-chan (chan))
+
+(defonce __3 (go (while true
+                   (>! todo-chan :todo))))
