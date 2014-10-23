@@ -145,27 +145,23 @@
               (do-task val ch)
               (recur))))))))
 
+(defn break-session [do-exercise]
+  (let [t (async/timeout 5000)]
+    (loop []
+      (let [[v c] (alts! [t reps-chan] :priority true)]
+        (if (= c t)
+          (println "Work time!")
+          (do
+            (do-exercise)
+            (recur)))))))
+
 (defn pomodoro []
   (go
     (<! (work-session))
-    (let [t (async/timeout 5000)]
-      (loop []
-        (let [[v c] (alts! [t reps-chan] :priority true)]
-          (if (= c t)
-            (println "Work time!")
-            (do
-              (println "Pushup!")
-              (recur))))))
+    (<! (break-session (fn [] (println "Pushup!"))))
 
     (<! (work-session))
-    (let [t (async/timeout 5000)]
-      (loop []
-        (let [[v c] (alts! [t reps-chan] :priority true)]
-          (if (= c t)
-            (println "Work time!")
-            (do
-              (println "Jump!")
-              (recur))))))
+    (<! (break-session (fn [] (println "Jump!"))))
 
     (<! (work-session))
     (<! (async/timeout 10000))
