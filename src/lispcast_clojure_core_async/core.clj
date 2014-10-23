@@ -124,19 +124,23 @@
 
 (defn pomodoro []
   (go
-    (do-work)
-    (<! (async/timeout 5000))
-
-    (do-work)
-    (<! (async/timeout 5000))
-
-    (do-work)
-    (<! (async/timeout 5000))
-
-    (do-work)
-    (<! (async/timeout 5000))
-
-    (println "Finished!")))
+    (let [t (async/timeout 10000)]
+      (loop []
+        (let [[val ch] (alts! [t
+                               telephone-chan
+                               email-chan
+                               todo-chan])]
+          (if (= ch t)
+            (println "Break time!")
+            (do
+              (cond
+               (= ch telephone-chan)
+               (println "Ring-ring!")
+               (= ch email-chan)
+               (println "You've got mail!")
+               (= ch todo-chan)
+               (println "Work work work!"))
+              (recur))))))))
 
 (defn work []
   (go
