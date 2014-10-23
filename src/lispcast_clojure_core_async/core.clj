@@ -98,8 +98,8 @@
     (async/close! box-chan)))
 
 (defn assembly-line []
-  (let [body-chan (chan 10)
-        wheel-chan (chan 20)
+  (let [body-chan (chan (async/dropping-buffer 10))
+        wheel-chan (chan (async/dropping-buffer 20))
         body+wheel-chan (chan 10)
         body+2-wheels-chan (chan 10)
         box-chan (chan 10)]
