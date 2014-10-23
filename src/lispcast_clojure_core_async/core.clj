@@ -140,13 +140,14 @@
 
 (defn work []
   (go
-    (let [[val ch] (alts! [telephone-chan
-                           email-chan
-                           todo-chan])]
-      (cond
-       (= ch telephone-chan)
-       (println "Ring-ring!")
-       (= ch email-chan)
-       (println "You've got mail!")
-       (= ch todo-chan)
-       (println "Work work work!")))))
+    (dotimes [x 5]
+      (let [[val ch] (alts! [telephone-chan
+                             email-chan
+                             todo-chan])]
+        (cond
+         (= ch telephone-chan)
+         (println "Ring-ring!")
+         (= ch email-chan)
+         (println "You've got mail!")
+         (= ch todo-chan)
+         (println "Work work work!"))))))
