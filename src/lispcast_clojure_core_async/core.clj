@@ -140,14 +140,20 @@
 
 (defn work []
   (go
-    (dotimes [x 5]
-      (let [[val ch] (alts! [telephone-chan
-                             email-chan
-                             todo-chan])]
-        (cond
-         (= ch telephone-chan)
-         (println "Ring-ring!")
-         (= ch email-chan)
-         (println "You've got mail!")
-         (= ch todo-chan)
-         (println "Work work work!"))))))
+    (let [t (async/timeout 10000)]
+     (loop []
+       (let [[val ch] (alts! [t
+                              telephone-chan
+                              email-chan
+                              todo-chan])]
+         (if (= ch t)
+           (println "Break time!")
+           (do
+            (cond
+             (= ch telephone-chan)
+             (println "Ring-ring!")
+             (= ch email-chan)
+             (println "You've got mail!")
+             (= ch todo-chan)
+             (println "Work work work!"))
+            (recur))))))))
