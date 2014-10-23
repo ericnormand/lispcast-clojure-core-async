@@ -120,3 +120,20 @@
       (go-car body-chan wheel-chan box-chan))
 
     (go-put-in-truck box-chan)))
+
+
+(defn pomodoro []
+  (go
+    (do-work)
+    (<! (async/timeout 5000))
+
+    (do-work)
+    (<! (async/timeout 5000))
+
+    (do-work)
+    (<! (async/timeout 5000))
+
+    (do-work)
+    (<! (async/timeout 5000))
+
+    (println "Finished!")))
