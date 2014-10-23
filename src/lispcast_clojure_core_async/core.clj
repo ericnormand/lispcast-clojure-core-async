@@ -138,7 +138,7 @@
         (let [[val ch] (alts! [t
                                telephone-chan
                                email-chan
-                               todo-chan])]
+                               todo-chan] :priority true)]
           (if (= ch t)
             (println "Break time!")
             (do
@@ -146,7 +146,7 @@
               (recur))))))
     (let [t (async/timeout 5000)]
       (loop []
-        (let [[v c] (alts! [t reps-chan])]
+        (let [[v c] (alts! [t reps-chan] :priority true)]
           (if (= c t)
             (println "Work time!")
             (do
@@ -158,7 +158,7 @@
         (let [[val ch] (alts! [t
                                telephone-chan
                                email-chan
-                               todo-chan])]
+                               todo-chan] :priority true)]
           (if (= ch t)
             (println "Break time!")
             (do
@@ -166,7 +166,7 @@
               (recur))))))
     (let [t (async/timeout 5000)]
       (loop []
-        (let [[v c] (alts! [t reps-chan])]
+        (let [[v c] (alts! [t reps-chan] :priority true)]
           (if (= c t)
             (println "Work time!")
             (do
@@ -178,7 +178,7 @@
         (let [[val ch] (alts! [t
                                telephone-chan
                                email-chan
-                               todo-chan])]
+                               todo-chan] :priority true)]
           (if (= ch t)
             (println "Break time!")
             (do
