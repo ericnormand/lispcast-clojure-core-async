@@ -147,7 +147,7 @@
 
 (defn pomodoro []
   (go
-    (work-session)
+    (<! (work-session))
     (let [t (async/timeout 5000)]
       (loop []
         (let [[v c] (alts! [t reps-chan] :priority true)]
@@ -157,7 +157,7 @@
               (println "Pushup!")
               (recur))))))
 
-    (work-session)
+    (<! (work-session))
     (let [t (async/timeout 5000)]
       (loop []
         (let [[v c] (alts! [t reps-chan] :priority true)]
@@ -167,7 +167,7 @@
               (println "Jump!")
               (recur))))))
 
-    (work-session)
+    (<! (work-session))
     (<! (async/timeout 10000))
     (println "Work is done!")))
 
