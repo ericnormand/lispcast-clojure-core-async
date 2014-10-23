@@ -109,6 +109,6 @@
 
 (defonce reps-chan (chan))
 
-(defonce __3 (go (while true
+(defonce __4 (go (while true
                    (>! reps-chan :rep)
                    (<! (async/timeout 1000)))))
