@@ -25,6 +25,7 @@
 (def part-box (atom [:free :free]))
 
 (defn take-part []
+  (Thread/sleep 200)
   (let [status (swap! part-box try-to-take)]
     (if (not= [:free :taken] status)
       (do
@@ -32,7 +33,7 @@
         (recur))
       (let [r (rand-nth [:wheel :wheel (atom {:body []
                                               :status [:free :free]})])]
-        (Thread/sleep 1000)
+        (Thread/sleep 800)
         (reset! part-box [:taken :free])
         r))))
 
