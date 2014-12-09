@@ -61,12 +61,12 @@
 
 (def truck (atom [:free :free]))
 
-(defn put-in-truck [body]
+(defn put-in-truck [box]
   (let [status (swap! truck try-to-take)]
     (if (not= [:free :taken] status)
       (do
         (Thread/sleep 100)
-        (recur body))
+        (recur box))
       (do
         (Thread/sleep 2000)
         (reset! truck [:taken :free])

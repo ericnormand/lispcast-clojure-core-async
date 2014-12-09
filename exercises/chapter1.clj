@@ -6,7 +6,7 @@
 
 (time (box-up :body))
 
-(time (put-in-truck :body))
+(time (put-in-truck :box))
 
 ;; Exercise 2
 
