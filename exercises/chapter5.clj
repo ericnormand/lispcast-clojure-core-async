@@ -54,11 +54,12 @@
   (go
     (loop []
       (let [bw (<! body+wheel-chan)
-            wheel2 (<! wheel2-chan)
-            bww (attach-wheel bw wheel2)]
-        (println "Attached second wheel")
-        (when (>! body+2-wheels-chan bww)
-          (recur))))
+            wheel2 (<! wheel2-chan)]
+        (when (and bw wheel2) ;; check for nils
+          (let [bww (attach-wheel bw wheel2)]
+            (println "Attached second wheel")
+            (when (>! body+2-wheels-chan bww)
+              (recur))))))
     (async/close! body+wheel-chan)
     (async/close! wheel2-chan)))
 
@@ -66,11 +67,12 @@
   (go
     (loop []
       (let [body (<! body-chan)
-            wheel1 (<! wheel1-chan)
-            bw (attach-wheel body wheel1)]
-        (println "Attached first wheel")
-        (when (>! body+wheel-chan bw)
-          (recur))))
+            wheel1 (<! wheel1-chan)]
+        (when (and body wheel1)
+          (let [bw (attach-wheel body wheel1)]
+            (println "Attached first wheel")
+            (when (>! body+wheel-chan bw)
+              (recur))))))
     (async/close! body-chan)
     (async/close! wheel1-chan)))
 
