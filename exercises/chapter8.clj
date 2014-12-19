@@ -6,7 +6,9 @@
       (let [body (<! body-chan)
             wheel1 (<! wheel-chan)
             bw (attach-wheel body wheel1)
-            wheel2 (<! wheel-chan)bww (attach-wheel bw wheel2)box (box-up bww)]
+            wheel2 (<! wheel-chan)
+            bww (attach-wheel bw wheel2)
+            box (box-up bww)]
         (println "Finished car")
         (when (>! box-chan box)
           (recur))))
