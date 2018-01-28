@@ -108,8 +108,8 @@
                    (<! (async/timeout 1000))
                    (>! todo-chan :todo))))
 
-(defonce reps-chan (chan))
+(defonce rep-chan (chan))
 
 (defonce __4 (go (while true
-                   (>! reps-chan :rep)
+                   (>! rep-chan :rep)
                    (<! (async/timeout 1000)))))
