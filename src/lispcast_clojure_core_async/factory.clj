@@ -8,12 +8,16 @@
 ;; increase the size of the thread pool
 
 (defonce my-executor
-  (java.util.concurrent.Executors/newFixedThreadPool
-   1000
-   (conc/counted-thread-factory "toy-car-factory-%d" true)))
+         (let [executor-svc (Executors/newFixedThreadPool
+                              1
+                              (conc/counted-thread-factory "toy-car-factory-%d" true))]
+           (reify protocols/Executor
+             (protocols/exec [this r]
+               (.execute executor-svc ^Runnable r)))))
 
 (alter-var-root #'clojure.core.async.impl.dispatch/executor
-                (constantly (delay (tp/thread-pool-executor my-executor))))
+                (constantly (delay my-executor)))
+
 
 ;; define our factory operations
 
