@@ -1,36 +1,17 @@
-# lispcast-clojure-core-async
+# Clojure core.async factory
 
-FIXME: description
+Code to accompany the [Clojure core.async][course], part of
+[PurelyFunctional.tv][mentoring].
 
-## Installation
-
-Download from http://example.com/FIXME.
-
-## Usage
-
-FIXME: explanation
-
-    $ java -jar lispcast-clojure-core-async-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+[course]: https://purelyfunctional.tv/courses/clojure-core-async/
+[mentoring]: https://purelyfunctional.tv/
 
 ## License
 
-Copyright © 2014 FIXME
+[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+To the extent possible under law, the person who associated CC0 with
+this work has waived all copyright and related or neighboring rights
+to the code in this repository.
+
+See the `LICENSE` file for more information.
