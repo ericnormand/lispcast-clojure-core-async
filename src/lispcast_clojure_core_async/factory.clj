@@ -13,6 +13,7 @@
 (def part-box (atom [:free :free]))
 
 (defn take-part []
+  (Thread/sleep 200)
   (let [status (swap! part-box try-to-take)]
     (if (not= [:free :taken] status)
       (do
@@ -20,7 +21,7 @@
         (recur))
       (let [r (rand-nth [:wheel :wheel (atom {:body []
                                               :status [:free :free]})])]
-        (Thread/sleep 1000)
+        (Thread/sleep 800)
         (reset! part-box [:taken :free])
         r))))
 
@@ -48,12 +49,12 @@
 
 (def truck (atom [:free :free]))
 
-(defn put-in-truck [body]
+(defn put-in-truck [box]
   (let [status (swap! truck try-to-take)]
     (if (not= [:free :taken] status)
       (do
         (Thread/sleep 100)
-        (recur body))
+        (recur box))
       (do
         (Thread/sleep 2000)
         (reset! truck [:taken :free])
@@ -66,3 +67,37 @@
 
 (defn wheel? [part]
   (= :wheel part))
+
+
+(defn do-work []
+  (println "Working...")
+  (Thread/sleep 500)
+  (println "Working...")
+  (Thread/sleep 5200)
+  (println "Still working...")
+  (Thread/sleep 500)
+  (println "Done working."))
+
+(defonce telephone-chan (chan))
+
+(defonce __1 (go (while true
+                   (<! (async/timeout 3000))
+                   (>! telephone-chan :ring))))
+
+(defonce email-chan (chan))
+
+(defonce __2 (go (while true
+                   (<! (async/timeout 1000))
+                   (>! email-chan :email))))
+
+(defonce todo-chan (chan))
+
+(defonce __3 (go (while true
+                   (<! (async/timeout 1000))
+                   (>! todo-chan :todo))))
+
+(defonce reps-chan (chan))
+
+(defonce __4 (go (while true
+                   (>! reps-chan :rep)
+                   (<! (async/timeout 1000)))))
