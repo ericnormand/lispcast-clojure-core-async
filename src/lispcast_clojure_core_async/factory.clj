@@ -1,19 +1,7 @@
 (ns lispcast-clojure-core-async.factory
   (:require
-   [clojure.core.async.impl.concurrent :as conc]
-   [clojure.core.async.impl.exec.threadpool :as tp]
    [clojure.core.async :as async
     :refer [>! <! alts! chan put! go]]))
-
-;; increase the size of the thread pool
-
-(defonce my-executor
-  (java.util.concurrent.Executors/newFixedThreadPool
-   1000
-   (conc/counted-thread-factory "toy-car-factory-%d" true)))
-
-(alter-var-root #'clojure.core.async.impl.dispatch/executor
-                (constantly (delay (tp/thread-pool-executor my-executor))))
 
 ;; define our factory operations
 
@@ -25,6 +13,7 @@
 (def part-box (atom [:free :free]))
 
 (defn take-part []
+  (Thread/sleep 200)
   (let [status (swap! part-box try-to-take)]
     (if (not= [:free :taken] status)
       (do
@@ -32,7 +21,7 @@
         (recur))
       (let [r (rand-nth [:wheel :wheel (atom {:body []
                                               :status [:free :free]})])]
-        (Thread/sleep 1000)
+        (Thread/sleep 800)
         (reset! part-box [:taken :free])
         r))))
 
@@ -60,12 +49,12 @@
 
 (def truck (atom [:free :free]))
 
-(defn put-in-truck [body]
+(defn put-in-truck [box]
   (let [status (swap! truck try-to-take)]
     (if (not= [:free :taken] status)
       (do
         (Thread/sleep 100)
-        (recur body))
+        (recur box))
       (do
         (Thread/sleep 2000)
         (reset! truck [:taken :free])
@@ -104,4 +93,11 @@
 (defonce todo-chan (chan))
 
 (defonce __3 (go (while true
+                   (<! (async/timeout 1000))
                    (>! todo-chan :todo))))
+
+(defonce reps-chan (chan))
+
+(defonce __4 (go (while true
+                   (>! reps-chan :rep)
+                   (<! (async/timeout 1000)))))
